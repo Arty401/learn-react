@@ -11,7 +11,7 @@ const UnPrivateRoute: React.FC<AuthBasedRouteProps> = ({component: Component}) =
     const authData = getAuthData();
 
     if (auth.user || authData._token) {
-        return <Navigate to={ROUTES.main} />;
+        return <Navigate replace to={ROUTES.main} />;
     }
 
     return Component

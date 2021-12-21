@@ -14,7 +14,7 @@ const PrivateRoute: React.FC<AuthBasedRouteProps> = ({component: Component}) => 
         return Component
     }
 
-    return <Navigate to={ROUTES.login} />;
+    return <Navigate replace to={ROUTES.login} />;
 };
 
 export default PrivateRoute;
