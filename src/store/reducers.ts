@@ -1,5 +1,5 @@
 import {combineReducers} from "@reduxjs/toolkit";
-import auth from "../features/auth/authSlice";
+import auth from "../features/auth/redux/authSlice";
 
 export type RootState = ReturnType<typeof reducers>
 

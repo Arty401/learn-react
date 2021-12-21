@@ -1,14 +1,13 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {loginRequest, loginSuccess} from "../../features/auth/authSlice";
+import {loginRequest, loginSuccess} from "../../features/auth/redux/authSlice";
 import {RootState} from "../../store/reducers";
-import {AuthInitialState, IUser} from "../../features/auth/types";
+import {AuthInitialState, IUser} from "../../features/auth/redux/types";
+import LoginForm from "../../features/auth/components/LoginForm";
 
 const Login = () => {
     const auth: AuthInitialState = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch();
-
-    console.log(auth.user, auth.isLoading, auth.errors);
 
     async function login() {
         await dispatch(loginRequest());
@@ -22,8 +21,10 @@ const Login = () => {
 
     return (
         <div>
-            Login
-            <button onClick={() => login()}>Auth</button>
+            <div className="text-center">
+                <h1>Login</h1>
+            </div>
+            <LoginForm />
         </div>
     );
 };

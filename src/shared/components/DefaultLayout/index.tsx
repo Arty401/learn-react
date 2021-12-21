@@ -5,7 +5,7 @@ const DefaultLayout = ({children}: { children: ReactElement }) => {
     return (
         <>
             <Navbar />
-            <main>
+            <main className="container">
                 {children}
             </main>
         </>
