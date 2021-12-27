@@ -5,8 +5,15 @@ import {ROUTES} from "../constants/routes";
 import Login from "../pages/Login";
 import PrivateRoute from "./Private";
 import UnPrivateRoute from "./UnPrivate";
+import {useEffect} from "react";
+import {getStorageValue} from "../api/localStorage";
+import {useAuth} from "src/hooks";
 
 const Routes = () => {
+    const {onLoginWithToken} = useAuth()
+    useEffect(() => {
+        onLoginWithToken(getStorageValue('_token'))
+    }, [onLoginWithToken])
     return (
         <RoutesComponent>
             <Route path={ROUTES.main} element={<App />}>

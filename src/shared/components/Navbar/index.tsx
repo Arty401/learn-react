@@ -11,7 +11,7 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     const authButtons = useCallback(() => {
-        if (!auth.user) {
+        if (!auth.isLoggedIn) {
             return (
                 <>
                     <button
@@ -27,7 +27,7 @@ const Navbar = () => {
         }
 
         return <button type="button" className="btn btn-warning" onClick={() => dispatch(logOut())}>Sign-out</button>;
-    }, [auth.user])
+    }, [auth.isLoggedIn])
 
     return (
         <header className="p-3 bg-dark text-white">
@@ -45,7 +45,7 @@ const Navbar = () => {
                                 Home
                             </NavLink>
                         </li>
-                        {auth.user && (
+                        {auth.isLoggedIn && (
                             <li className="nav-item">
                                 <NavLink to={ROUTES.phones} className="nav-link px-2 text-secondary">
                                     Phones
