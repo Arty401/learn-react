@@ -1,57 +1,57 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {AuthInitialState, AuthLoginResponse, IUser} from "./types";
+import {createSlice, SerializedError} from "@reduxjs/toolkit";
+//import { IUser} from "./types";
+import {loginThunk} from './thunks';
+import {clearStorageValue, setStorageValue} from "src/api/localStorage";
 
-export const INITIAL_STATE: AuthInitialState = {
+export const INITIAL_STATE = {
     isLoading: false,
-    user: null,
-    errors: null
+    isLoggedIn: false,
+   // user: null as IUser | null,
+    errors: null as null | SerializedError
 };
 
 const authSlice = createSlice({
     name: 'auth',
     initialState: INITIAL_STATE,
     reducers: {
-        loginRequest: () => {
-            return {
-                user: null,
-                isLoading: true,
-                errors: null
-            } as AuthInitialState
+        loginWithToken: (state, {payload}: {payload: {_token: string}}) => {
+            setStorageValue('_token', payload._token);
+            state.isLoggedIn = true;
+            state.errors = null;
         },
-        loginSuccess: (state, action) => {
-            const data = action.payload as AuthLoginResponse;
-
-            localStorage.setItem('user', JSON.stringify(data.user));
-            localStorage.setItem('_token', data._token);
-
-            return {
-                user: data.user as IUser,
-                isLoading: false,
-                errors: null
-            } as AuthInitialState
-        },
-        loginFailed: (state, action) => ({
-            user: null,
-            isLoading: false,
-            errors: action.payload
-        } as AuthInitialState),
         logOut: () => {
-            localStorage.removeItem('user');
-            localStorage.removeItem('_token');
-
+            //localStorage.removeItem('user');
+            clearStorageValue('_token');
             return {
                 user: null,
                 isLoading: false,
+                isLoggedIn: false,
                 errors: null
-            } as AuthInitialState;
+            };
         },
     },
+    extraReducers: builder => {
+        builder
+            .addCase(loginThunk.pending, (state) => {
+            //state.user = null;
+            state.isLoading = true;
+            state.errors = null;
+        }).addCase(loginThunk.fulfilled, (state) => {
+            //state.user = payload.user
+            state.isLoading = false;
+            state.isLoggedIn = true;
+            state.errors = null;
+        }).addCase(loginThunk.rejected, (state, {error}) => {
+            //state.user = null
+            state.isLoading = false;
+            state.isLoggedIn = false;
+            state.errors = error;
+        })
+    }
 });
 
 export const {
-    loginRequest,
-    loginSuccess,
-    loginFailed,
+    loginWithToken,
     logOut
 } = authSlice.actions;
 

@@ -1,43 +1,16 @@
 import React from 'react';
-import {v4} from 'uuid';
-import {AuthFormDataType} from "../../ts";
-
-import {useNavigate} from 'react-router-dom'
-import InputField from "../../../../shared/components/FormFields/InputField";
-import {useDispatch, useSelector} from "react-redux";
+import {AuthParams} from "../../ts";
+import InputField from "src/shared/components/FormFields/InputField";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {RootState} from "../../../../store/reducers";
-import {loginFailed, loginRequest, loginSuccess} from "../../redux/authSlice";
-import {IUser} from "../../redux/types";
-import {ROUTES} from "../../../../constants/routes";
+import {useAuth} from "../../../../hooks";
 
 const LoginForm = () => {
-    const {register, handleSubmit, formState: {errors}} = useForm<AuthFormDataType>();
+    const {register, handleSubmit, formState: {errors}} = useForm<AuthParams>();
+    const {isLoading, errors: authErrors, onLogin} = useAuth();
 
-    const navigate = useNavigate();
-
-    const {
-        isLoading, errors: authErrors
-    } = useSelector((state: RootState) => state.auth);
-
-    const dispatch = useDispatch();
-
-    const onSubmitHandler: SubmitHandler<AuthFormDataType> = async (data: AuthFormDataType) => {
-        await dispatch(loginRequest())
-
+    const onSubmitHandler: SubmitHandler<AuthParams> = (data: AuthParams) => {
         if (data.email === 'test@gmail.com' && data.password === 'Password1') {
-            dispatch(loginSuccess({
-                user: {
-                    id: 1,
-                    email: 'test@gmail.com',
-                    name: 'Test'
-                } as IUser,
-                _token: v4()
-            }))
-
-            navigate(ROUTES.phones);
-        } else {
-            await dispatch(loginFailed({message: 'Provided data is invalid'}))
+            onLogin(data)
         }
     }
 
