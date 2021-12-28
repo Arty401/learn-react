@@ -51,7 +51,7 @@ const PhonesCreateForm: FC<PhonesFormComponentProps> = ({defaultValues, submitHa
                                 message: "Phone number field is required"
                             },
                             pattern: {
-                                value: /\+[0-9]{1,3} \([0-9]{3}\) [0-9]{3}-[0-9]{4}/gm,
+                                value: /^\+[0-9]{1,3} \([0-9]{3}\) [0-9]{3}-[0-9]{4}$/,
                                 message: "Phone number is invalid"
                             },
                         })}
