@@ -5,21 +5,19 @@ import {ROUTES} from "../constants/routes";
 import Login from "../pages/Login";
 import PrivateRoute from "./Private";
 import UnPrivateRoute from "./UnPrivate";
-import {useEffect} from "react";
-import {getStorageValue} from "../api/localStorage";
-import {useAuth} from "src/hooks";
+import PhonesItemDetail from "../features/phones/components/PhonesItemDetail";
+import Create from "../pages/Phones/Create";
+import Edit from "../pages/Phones/Edit";
 
 const Routes = () => {
-    const {onLoginWithToken} = useAuth()
-    useEffect(() => {
-        onLoginWithToken(getStorageValue('_token'))
-    }, [onLoginWithToken])
     return (
         <RoutesComponent>
             <Route path={ROUTES.main} element={<App />}>
-                <Route index element={<Main />} />
+                <Route index element={<PrivateRoute component={<Main />} />} />
+                <Route path={ROUTES.phones.show()} element={<PrivateRoute component={<PhonesItemDetail />} />} />
+                <Route path={ROUTES.phones.create} element={<PrivateRoute component={<Create />} />} />
+                <Route path={ROUTES.phones.edit()} element={<PrivateRoute component={<Edit />} />} />
                 <Route path={ROUTES.login} element={<UnPrivateRoute component={<Login />} />} />
-                <Route path={ROUTES.phones} element={<PrivateRoute component={<Main />} />} />
             </Route>
         </RoutesComponent>
     );

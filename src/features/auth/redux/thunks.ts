@@ -3,11 +3,10 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import {AuthLoginResponse, AuthParams} from '../ts';
 import {v4} from "uuid";
 import {setStorageValue} from "src/api/localStorage";
+import {RootState} from "../../../store";
 
-export const loginThunk = createAsyncThunk<AuthLoginResponse, AuthParams>('@AUTH', async (param, thunkAPI) => {
+export const loginThunk = createAsyncThunk<AuthLoginResponse, AuthParams, { state: RootState }>('@AUTH', async (param, thunkAPI) => {
     try {
-        // API call
-        //localStorage.setItem('user', JSON.stringify(data.user));
         const _token = v4();
         setStorageValue('_token', _token);
         return {

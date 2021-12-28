@@ -1,14 +1,13 @@
 import {useCallback} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from "src/store/reducers";
 import {AuthParams} from "../ts";
 import {loginThunk} from "../redux/thunks";
-import {logOut, loginWithToken} from "../redux/authSlice";
+import {loginWithToken, logOut} from "../redux/authSlice";
+import {useAppDispatch, useAppSelector} from "../../../hooks";
 
 export default function useAuth() {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
-    const auth = useSelector((state: RootState) => state.auth);
+    const auth = useAppSelector(state => state.auth);
 
     const onLogin = useCallback((params: AuthParams) => dispatch(loginThunk(params)), [dispatch]);
 

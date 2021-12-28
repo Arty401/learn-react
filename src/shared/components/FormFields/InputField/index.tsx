@@ -1,9 +1,9 @@
 import React from 'react';
 import {InputFieldProps} from "../ts";
 
-const InputField = ({value, label, disabled = false, type = 'text', register, errors}: InputFieldProps) => {
+const InputField = ({label, disabled = false, type = 'text', register, errors, className, required}: InputFieldProps) => {
     return (
-        <div>
+        <div className={className}>
             {label && (
                 <label className="form-label">
                     {label}
@@ -12,10 +12,10 @@ const InputField = ({value, label, disabled = false, type = 'text', register, er
 
             <input
                 type={type}
-                value={value}
+                required={required}
                 disabled={disabled}
                 {...register}
-                className={[errors ? 'is-invalid' : '', 'form-control'].join(' ')}
+                className={['form-control', errors ? 'is-invalid' : ''].join(' ')}
             />
             {errors && <p className="text-danger">{errors?.message}</p>}
         </div>

@@ -1,17 +1,16 @@
 import React, {useCallback} from 'react';
 import {NavLink, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../../constants/routes";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../store/reducers";
 import {logOut} from "../../../features/auth/redux/authSlice";
+import {useAppDispatch, useAppSelector} from "../../../hooks";
 
 const Navbar = () => {
-    const auth = useSelector((state: RootState) => state.auth);
-    const dispatch = useDispatch();
+    const {isLoggedIn} = useAppSelector(state => state.auth);
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const authButtons = useCallback(() => {
-        if (!auth.isLoggedIn) {
+        if (!isLoggedIn) {
             return (
                 <>
                     <button
@@ -27,7 +26,7 @@ const Navbar = () => {
         }
 
         return <button type="button" className="btn btn-warning" onClick={() => dispatch(logOut())}>Sign-out</button>;
-    }, [auth.isLoggedIn])
+    }, [isLoggedIn])
 
     return (
         <header className="p-3 bg-dark text-white">
@@ -40,15 +39,10 @@ const Navbar = () => {
                     </NavLink>
 
                     <ul className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                        <li className="nav-item">
-                            <NavLink to={ROUTES.main} className="nav-link px-2 text-secondary">
-                                Home
-                            </NavLink>
-                        </li>
-                        {auth.isLoggedIn && (
+                        {isLoggedIn && (
                             <li className="nav-item">
-                                <NavLink to={ROUTES.phones} className="nav-link px-2 text-secondary">
-                                    Phones
+                                <NavLink to={ROUTES.main} className="nav-link px-2 text-secondary">
+                                    Home
                                 </NavLink>
                             </li>
                         )}

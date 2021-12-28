@@ -5,8 +5,11 @@ import {AuthBasedRouteProps} from "./types";
 import {useAuth} from "../hooks";
 
 const PrivateRoute: React.FC<AuthBasedRouteProps> = ({component: Component}) => {
-    const {isLoggedIn} = useAuth();
+    const {isLoggedIn, isAuthReady} = useAuth();
 
+    if (!isAuthReady) {
+        return <div>Loading</div>
+    }
     if (isLoggedIn) {
         return Component
     }
