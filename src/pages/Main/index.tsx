@@ -5,10 +5,13 @@ import {NavLink} from "react-router-dom";
 
 const Main = () => {
     return (
-        <div>
-            <div className="row align-items-center">
-                <h1 className="col">Phones List</h1>
+        <div className="border rounded p-4 mt-5 w-50 mx-auto">
+            <div className="row align-items-center mb-2">
+                <h2 className="col m-0">Phones List</h2>
                 <NavLink to={ROUTES.phones.create} className="col-3 btn btn-success">Create new</NavLink>
+            </div>
+            <div className="row">
+                <hr className="m-0"/>
             </div>
             <PhonesList/>
         </div>

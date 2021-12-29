@@ -12,7 +12,7 @@ type EditParamsType = {
 
 const Edit: FC = () => {
     const {id} = useParams<EditParamsType>();
-    const {isLoading, onGetById, getFullName, phone, onUpdate, errors} = usePhones();
+    const {isLoading, onGetById, getFullName, phone, onUpdate, errors, onGetAll, phones} = usePhones();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,13 +30,17 @@ const Edit: FC = () => {
     }
 
     const onSubmitHandler: SubmitHandler<IPhoneNumberFormValues> = async (data) => {
+        if (!phones) {
+            await onGetAll();
+        }
         await onUpdate(data).unwrap().then(() => navigate(ROUTES.phones.show(data.id)));
     }
 
     return (
-        <div className="mt-5 mx-auto row justify-content-center border rounded p-3 w-75">
+        <div className="mt-5 mx-auto row justify-content-center border rounded p-3 w-50">
             <h2>Edit "{getFullName(phone)}" Phone Number</h2>
-            <PhonesCreateForm defaultValues={phone} submitHandler={onSubmitHandler} submitButtonText="Edit"/>
+            <hr />
+            <PhonesCreateForm defaultValues={phone} submitHandler={onSubmitHandler} submitButtonText="Edit" />
         </div>
     );
 };

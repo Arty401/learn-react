@@ -17,6 +17,7 @@ const Create = () => {
     return (
         <div className="mt-5 mx-auto row justify-content-center border rounded p-3 w-50">
             <h1>Create Phone Number</h1>
+            <hr/>
             <PhonesCreateForm submitHandler={onSubmitHandler} submitButtonText="Create"/>
         </div>
     );

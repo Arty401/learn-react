@@ -55,11 +55,17 @@ const LoginForm = () => {
                 errors={errors.password}
             />
 
-            <button className="btn btn-primary mt-2">{isLoading ? (
-                <div className="spinner-border" role="status">
-                    <span className="visually-hidden"> </span>
-                </div>
-            ) : 'Login'}</button>
+            <div className="row justify-content-end">
+                <button className="col-3 btn btn-primary mt-2 me-2">{
+                    isLoading
+                        ? (
+                            <div className="spinner-border" role="status">
+                                <span className="visually-hidden"> </span>
+                            </div>
+                        )
+                        : 'Login'
+                }</button>
+            </div>
         </form>
     );
 };
