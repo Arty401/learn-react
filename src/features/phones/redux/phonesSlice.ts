@@ -6,7 +6,8 @@ const initialState: PhonesInitialState = {
     phones: null,
     phone: null,
     isLoading: false,
-    errors: null
+    errors: null,
+    lastCreatedId: null
 };
 
 const PhonesSlice = createSlice({

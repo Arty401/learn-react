@@ -1,10 +1,9 @@
 import React, {FC, useEffect} from 'react';
 import PhonesCreateForm from "../../../features/phones/components/PhonesCreateForm";
 import {usePhones} from "../../../hooks";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {SubmitHandler} from "react-hook-form";
 import {IPhoneNumberFormValues} from "../../../features/phones/ts";
-import {ROUTES} from "../../../constants/routes";
 
 type EditParamsType = {
     id: string
@@ -13,7 +12,6 @@ type EditParamsType = {
 const Edit: FC = () => {
     const {id} = useParams<EditParamsType>();
     const {isLoading, onGetById, getFullName, phone, onUpdate, errors, onGetAll, phones} = usePhones();
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (id) {
@@ -33,7 +31,8 @@ const Edit: FC = () => {
         if (!phones) {
             await onGetAll();
         }
-        await onUpdate(data).unwrap().then(() => navigate(ROUTES.phones.show(data.id)));
+
+        await onUpdate(data);
     }
 
     return (

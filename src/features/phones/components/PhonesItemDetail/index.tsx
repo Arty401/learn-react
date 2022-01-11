@@ -5,7 +5,7 @@ import {ROUTES} from "../../../../constants/routes";
 
 const PhonesItemDetail = () => {
     const {id} = useParams<{ id: string }>();
-    const {isLoading, phone, onGetById, onDelete, errors} = usePhones()
+    const {isLoading, phone, onGetById, onDelete} = usePhones()
 
     useEffect(() => {
         if (id) {
@@ -24,7 +24,7 @@ const PhonesItemDetail = () => {
                     <div className="row">
                         <h1 className="text-center">{`${phone.name.first} ${phone.name.last}`}</h1>
                     </div>
-                    <hr className="m-0"/>
+                    <hr className="m-0" />
                     <div className="mt-2">
                         <div className="row">
                             <p className="m-0">Is Active: {phone.isActive ? 'Active' : 'Inactive'}</p>
@@ -35,7 +35,7 @@ const PhonesItemDetail = () => {
                             <p className="m-0">Age: {phone.age}</p>
                             <p className="m-0">Registered: {phone.registered}</p>
                         </div>
-                        <hr/>
+                        <hr />
                         <div className="row justify-content-end">
                             <NavLink to={ROUTES.phones.edit(phone.id)} className="col-3 btn btn-primary me-2">
                                 Edit
@@ -47,7 +47,6 @@ const PhonesItemDetail = () => {
                     </div>
                 </>
             )}
-            {/*{errors && errors.message}*/}
         </div>
     );
 };

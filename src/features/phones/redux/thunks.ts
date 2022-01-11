@@ -20,7 +20,7 @@ export const getPhoneById = createAsyncThunk<PhoneNumberRecord | null, string, {
         let data: PhoneNumberRecord[];
 
         if (statePhones) {
-            data = await statePhones;
+            data = statePhones;
         } else {
             data = await require('./phones.json') as PhoneNumberRecord[]
         }
