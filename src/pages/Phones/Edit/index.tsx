@@ -11,33 +11,33 @@ type EditParamsType = {
 
 const Edit: FC = () => {
     const {id} = useParams<EditParamsType>();
-    const {isLoading, onGetById, getFullName, phone, onUpdate, errors, onGetAll, phones} = usePhones();
+    const {isLoading, onFetchPhones, onFetchPhone, getFullName, phone, errors, phones, onUpdatePhone} = usePhones();
 
     useEffect(() => {
         if (id) {
-            onGetById(id);
+            onFetchPhone(id);
         }
-    }, [id, onGetById])
+    }, [id, onFetchPhone])
 
     if (isLoading) {
         return <div className="text-center h1">Loading...</div>
     }
 
     if (!phone || errors) {
-        return <div className="text-center h1">Phone with id "{id}" not found</div>
+        return <div className="text-center h1">Phone with id &quot;{id}&quot; not found</div>
     }
 
     const onSubmitHandler: SubmitHandler<IPhoneNumberFormValues> = async (data) => {
         if (!phones) {
-            await onGetAll();
+            await onFetchPhones();
         }
 
-        await onUpdate(data);
+        await onUpdatePhone(data);
     }
 
     return (
         <div className="mt-5 mx-auto row justify-content-center border rounded p-3 w-50">
-            <h2>Edit "{getFullName(phone)}" Phone Number</h2>
+            <h2>Edit &quot;{getFullName(phone)}&quot; Phone Number</h2>
             <hr />
             <PhonesCreateForm defaultValues={phone} submitHandler={onSubmitHandler} submitButtonText="Edit" />
         </div>

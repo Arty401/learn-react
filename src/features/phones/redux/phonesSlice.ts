@@ -1,6 +1,5 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {PhonesInitialState} from "../ts";
-import {createPhone, deletePhoneById, getAllPhones, getPhoneById, updatePhone} from "./thunks";
+import {createSlice, PayloadAction, SerializedError} from "@reduxjs/toolkit";
+import {PhoneNumberRecord, PhonesInitialState} from "../ts";
 
 const initialState: PhonesInitialState = {
     phones: null,
@@ -10,92 +9,99 @@ const initialState: PhonesInitialState = {
     lastCreatedId: null
 };
 
-const PhonesSlice = createSlice({
+const phonesSlice = createSlice({
     name: 'phones',
     initialState,
-    reducers: {},
-    extraReducers: builder => {
-        builder
-            .addCase(getAllPhones.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(getAllPhones.fulfilled, (state, {payload}) => {
-                state.phones = payload;
-                state.errors = null;
-                state.isLoading = false;
-            })
-            .addCase(getAllPhones.rejected, (state, {error}) => {
-                state.phones = null;
-                state.errors = error;
-                state.isLoading = false;
-            })
-            .addCase(getPhoneById.pending, (state) => {
-                state.isLoading = true;
-                state.phone = null;
-                state.errors = null;
-            })
-            .addCase(getPhoneById.fulfilled, (state, {payload}) => {
-                state.isLoading = false;
-                state.phone = payload;
-                state.errors = null;
-            })
-            .addCase(getPhoneById.rejected, (state, {error, payload}) => {
-                state.isLoading = false;
-                state.phone = null;
+    reducers: {
+        fetchPhonesRequest: (state) => {
+            state.isLoading = true;
+            state.phones = null;
+            state.errors = null;
+        },
+        fetchPhonesSuccess: (state, action: PayloadAction<PhoneNumberRecord[]>) => {
+            state.isLoading = false;
+            state.phones = action.payload;
+            state.errors = null;
+        },
+        fetchPhonesFailure: (state, action: PayloadAction<SerializedError>) => {
+            state.isLoading = false;
+            state.phones = null;
+            state.errors = action.payload;
+        },
+        fetchPhoneRequest: (state) => {
+            state.isLoading = true;
+            state.phone = null;
+            state.errors = null;
+        },
+        fetchPhoneSuccess: (state, action: PayloadAction<PhoneNumberRecord["id"]>) => {
+            state.isLoading = false;
+            if (state.phones) {
+                const phone = state.phones.find(phone => phone.id === action.payload);
+                if (phone) state.phone = phone;
+            }
+            state.errors = null;
+        },
+        fetchPhoneFailure: (state, action: PayloadAction<SerializedError>) => {
+            state.isLoading = false;
+            state.phone = null;
+            state.errors = action.payload;
+        },
+        createPhoneRequest: (state) => {
+            state.isLoading = true;
+            state.lastCreatedId = null;
+            state.errors = null;
+        },
+        createPhoneSuccess: (state, action: PayloadAction<PhoneNumberRecord>) => {
+            state.isLoading = false;
+            if (state.phones) {
+                state.phones.push(action.payload);
+                state.phones.sort((a, b) => a.name.first.toLowerCase() > b.name.first.toLowerCase() ? 1 : -1);
+            }
+            state.lastCreatedId = action.payload.id;
+            state.errors = null;
+        },
+        createPhoneFailure: (state, action: PayloadAction<SerializedError>) => {
+            state.isLoading = false;
+            state.lastCreatedId = null;
+            state.errors = action.payload;
+        },
+        updatePhoneRequest: (state) => {
+            state.isLoading = true;
+            state.errors = null;
+        },
+        updatePhoneSuccess: (state, action: PayloadAction<PhoneNumberRecord>) => {
+            state.isLoading = false;
 
-                if (payload) {
-                    state.errors = payload;
-                } else {
-                    state.errors = error;
-                }
-            })
-            .addCase(deletePhoneById.pending, state => {
-                state.isLoading = true;
-            })
-            .addCase(deletePhoneById.fulfilled, (state, {payload}) => {
-                state.phones = payload;
-                state.isLoading = false;
-            })
-            .addCase(createPhone.pending, (state) => {
-                state.phone = null;
-                state.isLoading = true;
-            })
-            .addCase(createPhone.fulfilled, (state, {payload}) => {
-                if (state.phones) {
-                    state.phones = [...state.phones, payload].sort((a, b) => a.name.first.toLowerCase() > b.name.first.toLowerCase() ? 1 : -1);
-                } else {
-                    state.phones = [payload];
-                }
+            if (state.phones) {
+                const index = state.phones.findIndex(phone => phone.id === action.payload.id);
+                state.phones[index] = action.payload;
+            }
 
-                state.isLoading = false;
-            })
-            .addCase(createPhone.rejected, (state, {error}) => {
-                state.phone = null;
-                state.isLoading = false;
-                state.errors = error;
-            })
-            .addCase(updatePhone.pending, (state) => {
-                state.isLoading = true;
-                state.errors = null;
-            })
-            .addCase(updatePhone.fulfilled, (state, {payload}) => {
-                if (state.phones) {
-                    const phoneIndex = state.phones.findIndex(phone => phone.id === payload.id);
-                    if (phoneIndex >= 0) state.phones[phoneIndex] = payload;
-                }
-                state.isLoading = false;
-                state.errors = null;
-            })
-            .addCase(updatePhone.rejected, (state, {payload, error}) => {
-                state.isLoading = false;
+            state.errors = null;
+        },
+        updatePhoneFailure: (state, action: PayloadAction<SerializedError>) => {
+            state.isLoading = false;
+            state.errors = action.payload;
+        },
+        deletePhoneRequest: (state) => {
+            state.isLoading = true;
+            state.errors = null;
+        },
+        deletePhoneSuccess: (state, action: PayloadAction<PhoneNumberRecord["id"]>) => {
+            state.isLoading = false;
 
-                if (payload) {
-                    state.errors = payload;
-                } else {
-                    state.errors = error;
-                }
-            });
+            if (state.phones) {
+                state.phones = state.phones.filter(phone => phone.id !== action.payload);
+            }
+
+            state.errors = null;
+        },
+        deletePhoneFailure: (state, action: PayloadAction<SerializedError>) => {
+            state.isLoading = false;
+            state.errors = action.payload;
+        },
     },
 });
 
-export default PhonesSlice.reducer;
+export const phonesSliceActions = phonesSlice.actions;
+export default phonesSlice.reducer;

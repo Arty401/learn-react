@@ -24,7 +24,7 @@ const Navbar = () => {
         }
 
         return <button type="button" className="btn btn-warning" onClick={() => onLogout()}>Sign-out</button>;
-    }, [isLoggedIn])
+    }, [isLoggedIn, navigate, onLogout])
 
     return (
         <header className="p-3 bg-dark text-white">

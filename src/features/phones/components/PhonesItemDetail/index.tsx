@@ -5,16 +5,24 @@ import {ROUTES} from "../../../../constants/routes";
 
 const PhonesItemDetail = () => {
     const {id} = useParams<{ id: string }>();
-    const {isLoading, phone, onGetById, onDelete} = usePhones()
+    const {isLoading, phone, onFetchPhone, errors, onDeletePhone} = usePhones()
 
     useEffect(() => {
         if (id) {
-            onGetById(id);
+            onFetchPhone(id);
         }
-    }, [onGetById, id]);
+    }, [onFetchPhone, id]);
 
     if (isLoading) {
         return <h1>Loading</h1>;
+    }
+
+    if (!isLoading && errors) {
+        return (
+            <div className="row text-center">
+                <h1>{errors.message}</h1>
+            </div>
+        )
     }
 
     return (
@@ -40,7 +48,8 @@ const PhonesItemDetail = () => {
                             <NavLink to={ROUTES.phones.edit(phone.id)} className="col-3 btn btn-primary me-2">
                                 Edit
                             </NavLink>
-                            <button className="col-3 btn bg-danger text-white me-2" onClick={() => onDelete(phone.id)}>
+                            <button className="col-3 btn bg-danger text-white me-2"
+                                    onClick={() => onDeletePhone(phone.id)}>
                                 Delete
                             </button>
                         </div>

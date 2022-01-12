@@ -1,26 +1,24 @@
 import {useCallback} from 'react';
-import {useAppDispatch, useAppSelector} from "../../../hooks";
-import {loginRequest, loginWithTokenRequest, logoutRequest} from "../redux/actions";
+import {useAppSelector} from "../../../hooks";
+import useAuthActions from "./useAuthActions";
+import {AuthParams} from "../ts";
 
 export default function useAuth() {
-    const dispatch = useAppDispatch();
+    const actions = useAuthActions();
 
     const auth = useAppSelector(state => state.auth);
 
-    const onLogin = useCallback(() => dispatch(loginRequest()), [dispatch]);
+    const onLogin = useCallback((credentials: AuthParams) => actions.loginRequest(credentials), [actions]);
 
-    const onLogout = useCallback(() => dispatch(logoutRequest()), [dispatch]);
+    const onLoginWithToken = useCallback(() => actions.loginWithTokenRequest(), []);
 
-    const onLoginWithToken = useCallback((_token?: string | null) => {
-        if (_token) {
-            dispatch(loginWithTokenRequest({_token}))
-        }
-    }, [dispatch]);
+    const onLogout = useCallback(() => actions.logoutRequest(), [actions]);
 
     return {
         ...auth,
         onLogin,
-        onLogout,
         onLoginWithToken,
+        onLogout,
+        actions,
     };
 }

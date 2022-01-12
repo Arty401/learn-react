@@ -1,53 +1,27 @@
-import * as types from './types';
-import {SerializedError} from "@reduxjs/toolkit";
+import {LoginFailurePayloadAction, LoginRequestPayloadAction, LoginSuccessPayloadAction} from "../ts";
+import {createAction, SerializedError} from "@reduxjs/toolkit";
+import {authSliceActions} from './authSlice'
 
-export const loginRequest = () => ({
-    type: types.LOGIN_REQUEST
-});
+export const loginRequest = createAction<LoginRequestPayloadAction>(authSliceActions.loginRequest.type);
+export const loginSuccess = createAction<LoginSuccessPayloadAction>(authSliceActions.loginSuccess.type);
+export const loginFailure = createAction<LoginFailurePayloadAction>(authSliceActions.loginFailure.type);
 
-export const loginSuccess = () => ({
-    type: types.LOGIN_SUCCESS
-})
+export const loginWithTokenRequest = createAction(authSliceActions.loginWithTokenRequest.type);
+export const loginWithTokenSuccess = createAction(authSliceActions.loginWithTokenSuccess.type);
+export const loginWithTokenFailure = createAction<SerializedError>(authSliceActions.loginWithTokenFailure.type);
 
-export const loginFailure = (payload: SerializedError) => ({
-    type: types.LOGIN_FAILURE,
-    payload,
-});
+export const logoutRequest = createAction(authSliceActions.logoutRequest.type);
+export const logoutSuccess = createAction(authSliceActions.logoutSuccess.type);
+export const logoutFailure = createAction<SerializedError>(authSliceActions.logoutFailure.type);
 
-export const loginWithTokenRequest = (payload: { _token: string }) => ({
-    type: types.LOGIN_WITH_TOKEN_REQUEST,
-    payload
-});
-
-export const loginWithTokenSuccess = (payload: string) => ({
-    type: types.LOGIN_WITH_TOKEN_SUCCESS,
-    payload,
-})
-
-export const loginWithTokenFailure = (payload: SerializedError) => ({
-    type: types.LOGIN_WITH_TOKEN_FAILURE,
-    payload,
-});
-
-export const logoutRequest = () => ({
-    type: types.LOGOUT_REQUEST,
-});
-
-export const logoutSuccess = () => ({
-    type: types.LOGOUT_SUCCESS,
-})
-
-export const logoutFailure = (payload: SerializedError) => ({
-    type: types.LOGOUT_FAILURE,
-    payload,
-});
-
-export type AuthActions = ReturnType<typeof loginRequest |
-    typeof loginSuccess |
-    typeof loginFailure |
-    typeof loginWithTokenRequest |
-    typeof loginWithTokenSuccess |
-    typeof loginWithTokenFailure |
-    typeof logoutRequest |
-    typeof logoutSuccess |
-    typeof logoutFailure>;
+export const authActions = {
+    loginRequest,
+    loginSuccess,
+    loginFailure,
+    logoutRequest,
+    logoutSuccess,
+    logoutFailure,
+    loginWithTokenRequest,
+    loginWithTokenSuccess,
+    loginWithTokenFailure,
+};

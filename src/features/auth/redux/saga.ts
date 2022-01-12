@@ -1,30 +1,50 @@
-import {put, takeEvery} from "redux-saga/effects";
+import {put, takeLatest} from "redux-saga/effects";
 import {v4} from "uuid";
-import {clearStorageValue, setStorageValue} from "../../../api/localStorage";
-import * as types from './types';
-import {loginFailure, loginSuccess, loginWithTokenSuccess, logoutSuccess} from "./actions";
+import {clearStorageValue, getStorageValue, setStorageValue} from "../../../api/localStorage";
+import {authSliceActions} from "./authSlice";
+import * as actions from "./actions";
 
-function* login() {
+
+function* login(action: ReturnType<typeof actions.loginRequest>) {
     try {
-        const _token = v4();
-        setStorageValue('_token', _token);
-        yield put(loginSuccess());
+        const {email, password} = action.payload;
+
+        if (email === 'test@gmail.com' && password === 'Password1') {
+            const _token: string = v4();
+            setStorageValue('_token', _token);
+
+            yield put(authSliceActions.loginSuccess(_token))
+        }
     } catch (error) {
-        yield put(loginFailure({name: "error", message: 'message'}));
+        yield put(authSliceActions.loginFailure({message: "Errors"}));
     }
 }
 
-function* loginWithToken(action: ReturnType<typeof loginWithTokenSuccess>) {
-    yield put(loginWithTokenSuccess(action.payload))
+function* loginWithToken() {
+    try {
+        const _token = getStorageValue('_token');
+
+        if (!_token) {
+            throw Error();
+        }
+
+        yield put(authSliceActions.loginWithTokenSuccess());
+    } catch (error) {
+        yield put(authSliceActions.loginWithTokenFailure());
+    }
 }
 
 function* logout() {
-    clearStorageValue('_token');
-    yield put(logoutSuccess())
+    try {
+        clearStorageValue('_token');
+        yield put(authSliceActions.logoutSuccess());
+    } catch (error) {
+        yield put(authSliceActions.logoutFailure({message: "Error"}))
+    }
 }
 
 export default function* authSaga() {
-    yield takeEvery(types.LOGIN_REQUEST, login);
-    yield takeEvery(types.LOGIN_WITH_TOKEN_REQUEST, loginWithToken);
-    yield takeEvery(types.LOGOUT_REQUEST, logout);
+    yield takeLatest(actions.loginRequest.type, login);
+    yield takeLatest(actions.loginWithTokenRequest.type, loginWithToken);
+    yield takeLatest(actions.logoutRequest.type, logout);
 }

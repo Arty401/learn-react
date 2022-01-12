@@ -9,9 +9,7 @@ const LoginForm = () => {
     const {isLoading, errors: authErrors, onLogin} = useAuth();
 
     const onSubmitHandler: SubmitHandler<AuthParams> = (data: AuthParams) => {
-        if (data.email === 'test@gmail.com' && data.password === 'Password1') {
-            onLogin();
-        }
+        onLogin(data);
     }
 
     return (

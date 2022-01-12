@@ -1,40 +1,52 @@
 import {useCallback} from "react";
-import {useNavigate} from "react-router-dom";
 import {IPhoneNumberFormValues, PhoneNumberRecord} from "../ts";
-import {useAppDispatch, useAppSelector} from "../../../hooks";
-import {
-    createPhoneRequest,
-    deletePhoneRequest,
-    getPhoneRequest,
-    getPhonesRequest,
-    updatePhoneRequest
-} from "../redux/actions";
+import {useAppSelector} from "../../../hooks";
+import usePhonesActions from "./usePhonesActions";
+import {useNavigate} from "react-router-dom";
 
 export default function usePhones() {
-    const dispatch = useAppDispatch();
+    const actions = usePhonesActions()
     const navigate = useNavigate();
-
     const phonesState = useAppSelector(state => state.phones);
 
-    const onGetAll = useCallback(() => dispatch(getPhonesRequest()), [dispatch]);
+    const onFetchPhones = useCallback(() => {
+        if (!phonesState.phones) {
+            actions.fetchPhonesRequest()
+        }
+    }, [phonesState.phones]);
 
-    const onGetById = useCallback((id: string) => dispatch(getPhoneRequest(id)), [dispatch]);
+    const onFetchPhone = useCallback((id: PhoneNumberRecord["id"]) => actions.fetchPhoneRequest(id), []);
 
-    const onCreate = useCallback((data: IPhoneNumberFormValues) => dispatch(createPhoneRequest(data, navigate)), [dispatch, navigate]);
+    const onCreatePhone = useCallback((data: IPhoneNumberFormValues) => actions.createPhoneRequest({
+        phone: data,
+        navigate
+    }), [navigate]);
 
-    const onDelete = useCallback((id: string) => dispatch(deletePhoneRequest(id, navigate)), [dispatch]);
+    const onUpdatePhone = useCallback((data: IPhoneNumberFormValues) => actions.updatePhoneRequest({
+        phone: data,
+        navigate
+    }), []);
 
-    const onUpdate = useCallback((data: IPhoneNumberFormValues) => dispatch(updatePhoneRequest(data, navigate)), [dispatch])
+    const onDeletePhone = useCallback((id: PhoneNumberRecord["id"]) => actions.deletePhoneRequest({
+        id,
+        navigate
+    }), [navigate, phonesState.errors]);
 
-    const getFullName = useCallback((phone: PhoneNumberRecord) => `${phone.name.first} ${phone.name.last}`, [dispatch]);
+    const getFullName = useCallback((phone: PhoneNumberRecord) => `${phone.name.first} ${phone.name.last}`, []);
+
+    const getPhones = useCallback((): PhoneNumberRecord[] | null => phonesState.phones, [phonesState.phones]);
+
+    const getPhone = useCallback((id: PhoneNumberRecord["id"]) => phonesState.phones && phonesState.phones.find(phone => phone.id === id), [phonesState.phones]);
 
     return {
         ...phonesState,
-        onGetAll,
-        onGetById,
-        onDelete,
-        onCreate,
-        onUpdate,
+        onFetchPhones,
+        onFetchPhone,
+        onCreatePhone,
+        onUpdatePhone,
+        onDeletePhone,
+        getPhones,
+        getPhone,
         getFullName,
     };
 }
