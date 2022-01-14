@@ -1,21 +1,21 @@
-import React, {useEffect} from 'react';
-import {Outlet} from "react-router-dom";
-import DefaultLayout from "./shared/components/DefaultLayout";
+import React, { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import './App.css';
-import {useAuth} from "./hooks";
+import { useAuth } from './hooks';
+import DefaultLayout from './shared/components/DefaultLayout';
 
-function App() {
-    const {onLoginWithToken} = useAuth();
+function App () {
+  const { onLoginWithToken } = useAuth();
 
-    useEffect(() => {
-        onLoginWithToken();
-    }, [onLoginWithToken]);
+  useEffect(() => {
+    onLoginWithToken();
+  }, [onLoginWithToken]);
 
-    return (
-        <DefaultLayout>
-            <Outlet />
-        </DefaultLayout>
-    );
+  return (
+    <DefaultLayout>
+      <Outlet />
+    </DefaultLayout>
+  );
 }
 
 export default App;

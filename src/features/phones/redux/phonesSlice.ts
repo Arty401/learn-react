@@ -61,7 +61,7 @@ const phonesSlice = createSlice<PhonesInitialState, SliceCaseReducers<PhonesInit
         state.isLoading = false;
 
         state.phones = state.phones ? [
-          ...state.phones,
+          ...state.phones.slice(),
           action.payload
         ].sort(
           (a, b) => (

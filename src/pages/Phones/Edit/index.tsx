@@ -25,10 +25,14 @@ const Edit: FC = () => {
   } = usePhones();
 
   useEffect(() => {
+    if (!phones) {
+      onFetchPhones();
+    }
+
     if (id) {
       onFetchPhone(id);
     }
-  }, [id, onFetchPhone]);
+  }, [id, onFetchPhone, onFetchPhones, phones]);
 
   if (isLoading) {
     return <div className="text-center h1">Loading...</div>;
@@ -50,6 +54,8 @@ const Edit: FC = () => {
   return (
     <Box
       display={'flex'}
+      flexWrap={'wrap'}
+      textAlign={'center'}
       flexDirection={'column'}
       justifyContent={'center'}
       border={'1px lightgray solid'}
