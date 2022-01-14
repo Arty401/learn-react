@@ -24,16 +24,17 @@ function * fetchPhone (action: ReturnType<typeof actions.fetchPhoneRequest>) {
   }
 }
 
-function * createPhone (action: ReturnType<typeof actions.createPhoneRequest>) {
+function * createPhone ({ payload }: ReturnType<typeof actions.createPhoneRequest>) {
   try {
     const phone: PhoneNumberRecord = yield {
-      ...action.payload.phone,
+      ...payload.phone,
       id: v4(),
       registered: new Date().toISOString(),
     } as PhoneNumberRecord;
 
     yield put(phonesSliceActions.createPhoneSuccess(phone));
-    yield call(() => action.payload.navigate(ROUTES.phones.show(phone.id)));
+    payload.addToast && payload.addToast();
+    yield call(() => payload.navigate(ROUTES.phones.show(phone.id)));
   } catch (error) {
     yield put(
       phonesSliceActions.createPhoneFailure(
@@ -46,9 +47,14 @@ function * createPhone (action: ReturnType<typeof actions.createPhoneRequest>) {
 function * updatePhone (action: ReturnType<typeof actions.updatePhoneRequest>) {
   try {
     yield put(phonesSliceActions.updatePhoneSuccess(
-      action.payload.phone as PhoneNumberRecord));
+        action.payload.phone as PhoneNumberRecord
+      )
+    );
+    action.payload.addToast && action.payload.addToast();
     yield call(() => action.payload.navigate(
-      ROUTES.phones.show(action.payload.phone.id)));
+        ROUTES.phones.show(action.payload.phone.id)
+      )
+    );
   } catch (error) {
     yield put(phonesSliceActions.updatePhoneFailure({ message: 'Error' }));
   }
@@ -57,6 +63,7 @@ function * updatePhone (action: ReturnType<typeof actions.updatePhoneRequest>) {
 function * deletePhone (action: ReturnType<typeof actions.deletePhoneRequest>) {
   try {
     yield put(phonesSliceActions.deletePhoneSuccess(action.payload.id));
+    action.payload.addToast && action.payload.addToast();
     yield call(() => action.payload.navigate(ROUTES.main));
   } catch (error) {
     yield put(phonesSliceActions.deletePhoneFailure({ message: 'Error' }));

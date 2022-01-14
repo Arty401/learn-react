@@ -1,63 +1,77 @@
-import {SerializedError} from "@reduxjs/toolkit";
-import {SubmitHandler} from "react-hook-form";
-import {NavigateFunction} from "react-router-dom";
+import { SerializedError } from '@reduxjs/toolkit';
+import { SubmitHandler } from 'react-hook-form';
+import { NavigateFunction } from 'react-router-dom';
 
 export interface PhoneNumberRecord {
-    id: string,
-    isActive: boolean,
-    age: number | null,
-    name: {
-        first: string,
-        last: string
-    },
-    company: string | null,
-    email: string | null,
-    phone: string,
-    address: string | null,
-    registered: string,
+  id: string,
+  isActive: boolean,
+  age: number | null,
+  name: {
+    first: string,
+    last: string
+  },
+  company: string | null,
+  email: string | null,
+  phone: string,
+  address: string | null,
+  registered: string,
 }
 
 export interface PhonesInitialState {
-    phones: PhoneNumberRecord[] | null,
-    phone: PhoneNumberRecord | null,
-    lastCreatedId: PhoneNumberRecord["id"] | null,
-    isLoading: boolean,
-    errors: SerializedError | null,
+  phones: PhoneNumberRecord[] | null,
+  phone: PhoneNumberRecord | null,
+  lastCreatedId: PhoneNumberRecord['id'] | null,
+  isLoading: boolean,
+  errors: SerializedError | null,
 }
 
 export interface IPhoneNumberFormValues {
-    id?: string | undefined;
-    isActive: boolean;
-    age: number | null;
-    name: {
-        first: string;
-        last: string;
-    };
-    company: string | null;
-    email: string | null;
-    phone: string;
-    address: string | null;
-    registered?: string | undefined;
+  id?: string | undefined;
+  isActive: boolean;
+  age: number | null;
+  name: {
+    first: string;
+    last: string;
+  };
+  company: string | null;
+  email: string | null;
+  phone: string;
+  address: string | null;
+  registered?: string | undefined;
 }
 
 export type PhonesFormComponentProps = {
-    defaultValues?: IPhoneNumberFormValues;
-    submitHandler: SubmitHandler<IPhoneNumberFormValues>;
-    submitButtonText?: string;
+  defaultValues?: IPhoneNumberFormValues;
+  submitHandler: SubmitHandler<IPhoneNumberFormValues>;
+  submitButtonText?: string;
 };
 
 export type NavigatePayloadAction = {
-    navigate: NavigateFunction;
+  navigate: NavigateFunction;
 }
 
-export type CreatePhoneRequestPayloadAction = NavigatePayloadAction & {
-    phone: IPhoneNumberFormValues;
+export type InteractsWithToastsPayloadActions = {
+  addToast?: () => void
 }
 
-export type DeletePhoneRequestPayloadAction = NavigatePayloadAction & {
-    id: PhoneNumberRecord["id"];
+export type CreatePhoneRequestPayloadAction =
+  NavigatePayloadAction
+  & InteractsWithToastsPayloadActions
+  & {
+  phone: IPhoneNumberFormValues;
+
 }
 
-export type UpdatePhoneRequestPayloadAction = NavigatePayloadAction & {
-    phone: IPhoneNumberFormValues;
+export type DeletePhoneRequestPayloadAction =
+  NavigatePayloadAction
+  & InteractsWithToastsPayloadActions
+  & {
+  id: PhoneNumberRecord['id'];
+}
+
+export type UpdatePhoneRequestPayloadAction =
+  NavigatePayloadAction
+  & InteractsWithToastsPayloadActions
+  & {
+  phone: IPhoneNumberFormValues;
 }

@@ -12,14 +12,20 @@ const PhonesItemDetail = () => {
     onFetchPhone,
     errors,
     onDeletePhone,
-    getFullName
+    getFullName,
+    phones,
+    onFetchPhones
   } = usePhones();
 
   useEffect(() => {
+    if (!phones) {
+      onFetchPhones()
+    }
+
     if (id) {
       onFetchPhone(id);
     }
-  }, [onFetchPhone, id]);
+  }, [onFetchPhone, id, phones, onFetchPhones]);
 
   if (isLoading) {
     return <h1>Loading</h1>;
