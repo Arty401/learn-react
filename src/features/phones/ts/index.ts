@@ -1,5 +1,6 @@
 import {SerializedError} from "@reduxjs/toolkit";
 import {SubmitHandler} from "react-hook-form";
+import {NavigateFunction} from "react-router-dom";
 
 export interface PhoneNumberRecord {
     id: string,
@@ -21,11 +22,11 @@ export interface PhonesInitialState {
     phone: PhoneNumberRecord | null,
     lastCreatedId: PhoneNumberRecord["id"] | null,
     isLoading: boolean,
-    errors: SerializedError | null | string,
+    errors: SerializedError | null,
 }
 
 export interface IPhoneNumberFormValues {
-    id: string | undefined;
+    id?: string | undefined;
     isActive: boolean;
     age: number | null;
     name: {
@@ -36,7 +37,7 @@ export interface IPhoneNumberFormValues {
     email: string | null;
     phone: string;
     address: string | null;
-    registered: string | undefined;
+    registered?: string | undefined;
 }
 
 export type PhonesFormComponentProps = {
@@ -45,7 +46,18 @@ export type PhonesFormComponentProps = {
     submitButtonText?: string;
 };
 
-export type CreatePhoneResponse = {
-    phones: PhoneNumberRecord[];
-    id: PhoneNumberRecord["id"]
+export type NavigatePayloadAction = {
+    navigate: NavigateFunction;
+}
+
+export type CreatePhoneRequestPayloadAction = NavigatePayloadAction & {
+    phone: IPhoneNumberFormValues;
+}
+
+export type DeletePhoneRequestPayloadAction = NavigatePayloadAction & {
+    id: PhoneNumberRecord["id"];
+}
+
+export type UpdatePhoneRequestPayloadAction = NavigatePayloadAction & {
+    phone: IPhoneNumberFormValues;
 }

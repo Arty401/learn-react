@@ -1,105 +1,72 @@
-import {createPhone as createPhoneAPI, fetchPhone, fetchPhones} from "../api";
-import {call, put, select, takeLatest} from "redux-saga/effects"
-import {
-    createPhoneFailure,
-    createPhoneRequest,
-    createPhoneSuccess,
-    deletePhoneRequest,
-    deletePhoneSuccess,
-    getPhoneRequest,
-    getPhonesFailure,
-    getPhonesSuccess,
-    getPhoneSuccess,
-    updatePhoneRequest,
-    updatePhoneSuccess
-} from "./actions";
-import * as types from './types';
-import {PhoneNumberRecord} from "../ts";
-import {ROUTES} from "../../../constants/routes";
-import {RootState} from "../../../store";
+import { call, put, takeLatest } from 'redux-saga/effects';
+import { v4 } from 'uuid';
+import { ROUTES } from '../../../constants/routes';
+import { fetchPhonesApi } from '../api';
+import { PhoneNumberRecord } from '../ts';
+import * as actions from './actions';
+import { phonesSliceActions } from './phonesSlice';
 
-function getPhonesState() {
-    return select((state: RootState) => state.phones.phones);
+function * fetchPhones () {
+  try {
+    const phones: PhoneNumberRecord[] = yield call(fetchPhonesApi);
+    yield put(phonesSliceActions.fetchPhonesSuccess(phones));
+  } catch (error) {
+    yield put(phonesSliceActions.fetchPhonesFailure({ 'message': 'Error' }));
+  }
 }
 
-function* getPhones() {
-    try {
-        let phones: PhoneNumberRecord[] | null = yield getPhonesState();
-
-        if (!phones) {
-            phones = yield call(fetchPhones);
-        }
-
-        yield phones && put(getPhonesSuccess(phones));
-    } catch (error) {
-        yield put(getPhonesFailure({message: "Error"}))
-    }
+function * fetchPhone (action: ReturnType<typeof actions.fetchPhoneRequest>) {
+  try {
+    yield put(phonesSliceActions.fetchPhoneSuccess(action.payload));
+  } catch (error) {
+    yield put(
+      phonesSliceActions.fetchPhoneFailure({ message: '404 Phone not found' }));
+  }
 }
 
-function* getPhone(action: ReturnType<typeof getPhoneRequest>) {
-    try {
-        const phones: PhoneNumberRecord[] | null = yield getPhonesState();
-        let phone: PhoneNumberRecord | undefined;
+function * createPhone (action: ReturnType<typeof actions.createPhoneRequest>) {
+  try {
+    const phone: PhoneNumberRecord = yield {
+      ...action.payload.phone,
+      id: v4(),
+      registered: new Date().toISOString(),
+    } as PhoneNumberRecord;
 
-        if (!phones) {
-            phone = yield call(fetchPhone, action.payload);
-        } else {
-            phone = phones.find(phone => phone.id === action.payload);
-        }
-
-        if (phone) {
-            yield put(getPhoneSuccess(phone));
-        }
-    } catch (error) {
-        console.log(error);
-    }
+    yield put(phonesSliceActions.createPhoneSuccess(phone));
+    yield call(() => action.payload.navigate(ROUTES.phones.show(phone.id)));
+  } catch (error) {
+    yield put(
+      phonesSliceActions.createPhoneFailure(
+        { message: 'Error when creating a phone number' }
+      )
+    );
+  }
 }
 
-function* createPhone(action: ReturnType<typeof createPhoneRequest>) {
-    try {
-        const phone: PhoneNumberRecord = yield call(createPhoneAPI, action.payload);
-        yield put(createPhoneSuccess(phone));
-        yield call(() => action.navigateFunction && action.navigateFunction(ROUTES.phones.edit(phone.id)));
-    } catch (error) {
-        yield put(createPhoneFailure({message: "Error"}));
-        console.log(error);
-    }
+function * updatePhone (action: ReturnType<typeof actions.updatePhoneRequest>) {
+  try {
+    yield put(phonesSliceActions.updatePhoneSuccess(
+      action.payload.phone as PhoneNumberRecord));
+    yield call(() => action.payload.navigate(
+      ROUTES.phones.show(action.payload.phone.id)));
+  } catch (error) {
+    yield put(phonesSliceActions.updatePhoneFailure({ message: 'Error' }));
+  }
 }
 
-function* deletePhone(action: ReturnType<typeof deletePhoneRequest>) {
-    try {
-        yield put(deletePhoneSuccess(action.payload));
-        yield call(() => action.navigateFunction && action.navigateFunction(ROUTES.main));
-    } catch (e) {
-        console.log(e);
-    }
+function * deletePhone (action: ReturnType<typeof actions.deletePhoneRequest>) {
+  try {
+    yield put(phonesSliceActions.deletePhoneSuccess(action.payload.id));
+    yield call(() => action.payload.navigate(ROUTES.main));
+  } catch (error) {
+    yield put(phonesSliceActions.deletePhoneFailure({ message: 'Error' }));
+  }
 }
 
-function* updatePhone(action: ReturnType<typeof updatePhoneRequest>) {
-    try {
-        const phones: PhoneNumberRecord[] | null = yield getPhonesState();
-
-        if (!phones) {
-            throw Error();
-        }
-
-        const phone: PhoneNumberRecord | undefined = yield phones.find(phone => phone.id === action.payload.id);
-
-        if (!phone) {
-            throw Error();
-        }
-
-        yield put(updatePhoneSuccess(action.payload as PhoneNumberRecord));
-        yield call(() => action.navigateFunction && action.navigateFunction(ROUTES.phones.show(action.payload.id)));
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-export default function* phonesSaga() {
-    yield takeLatest(types.GET_PHONES_REQUEST, getPhones);
-    yield takeLatest(types.GET_PHONE_REQUEST, getPhone);
-    yield takeLatest(types.CREATE_PHONE_REQUEST, createPhone);
-    yield takeLatest(types.DELETE_PHONE_REQUEST, deletePhone);
-    yield takeLatest(types.UPDATE_PHONE_REQUEST, updatePhone);
+export default function * phonesSaga () {
+  yield takeLatest(actions.fetchPhonesRequest, fetchPhones);
+  yield takeLatest(actions.fetchPhoneRequest, fetchPhone);
+  yield takeLatest(actions.createPhoneRequest, createPhone);
+  yield takeLatest(actions.updatePhoneRequest, updatePhone);
+  yield takeLatest(actions.deletePhoneRequest, deletePhone);
 }

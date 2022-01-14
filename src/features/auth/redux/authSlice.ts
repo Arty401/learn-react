@@ -1,8 +1,8 @@
-import {createSlice, SerializedError} from "@reduxjs/toolkit";
-import {loginThunk} from './thunks';
-import {clearStorageValue, setStorageValue} from "src/api/localStorage";
+import {createSlice, PayloadAction, SerializedError} from "@reduxjs/toolkit";
+import {setStorageValue} from "src/api/localStorage";
+import {LoginFailurePayloadAction, LoginSuccessPayloadAction} from "../ts";
 
-export const INITIAL_STATE = {
+export const initialState = {
     isAuthReady: false,
     isLoading: false,
     isLoggedIn: false,
@@ -11,47 +11,63 @@ export const INITIAL_STATE = {
 
 const authSlice = createSlice({
     name: 'auth',
-    initialState: INITIAL_STATE,
+    initialState,
     reducers: {
-        loginWithToken: (state, {payload}: {payload: {_token: string}}) => {
-            setStorageValue('_token', payload._token);
-            state.isLoggedIn = true;
-            state.errors = null;
-            state.isAuthReady = true;
-        },
-        logOut: () => {
-            clearStorageValue('_token');
-            return {
-                isAuthReady: false,
-                user: null,
-                isLoading: false,
-                isLoggedIn: false,
-                errors: null
-            };
-        },
-    },
-    extraReducers: builder => {
-        builder
-            .addCase(loginThunk.pending, (state) => {
+        loginRequest: (state) => {
             state.isLoading = true;
             state.errors = null;
-        }).addCase(loginThunk.fulfilled, (state) => {
+            state.isLoggedIn = false;
+            state.isAuthReady = true;
+        },
+        loginSuccess: (state, action: PayloadAction<LoginSuccessPayloadAction>) => {
+            setStorageValue('_token', action.payload);
             state.isLoading = false;
+            state.errors = null;
             state.isLoggedIn = true;
+            state.isAuthReady = true;
+        },
+        loginFailure: (state, action: PayloadAction<LoginFailurePayloadAction>) => {
+            state.isLoading = false;
+            state.errors = action.payload;
+            state.isLoggedIn = true;
+            state.isAuthReady = true;
+        },
+        loginWithTokenRequest: (state) => {
+            state.isAuthReady = true;
+            state.isLoading = true;
+            state.isLoggedIn = false;
+        },
+        loginWithTokenSuccess: (state) => {
+            state.isLoggedIn = true;
+            state.isLoading = false;
             state.errors = null;
             state.isAuthReady = true;
-        }).addCase(loginThunk.rejected, (state, {error}) => {
+        },
+        loginWithTokenFailure: (state) => {
             state.isLoading = false;
             state.isLoggedIn = false;
-            state.errors = error;
+            state.isAuthReady = false;
+        },
+        logoutRequest: (state) => {
+            state.isAuthReady = false;
+            state.isLoading = true;
+            state.isLoggedIn = true;
+            state.errors = null;
+        },
+        logoutSuccess: (state) => {
             state.isAuthReady = true;
-        })
-    }
+            state.isLoading = false;
+            state.isLoggedIn = false;
+            state.errors = null;
+        },
+        logoutFailure: (state, action: PayloadAction<SerializedError>) => {
+            state.isAuthReady = false;
+            state.isLoading = false;
+            state.isLoggedIn = true;
+            state.errors = action.payload;
+        },
+    },
 });
 
-export const {
-    loginWithToken,
-    logOut
-} = authSlice.actions;
-
+export const authSliceActions = authSlice.actions;
 export default authSlice.reducer;

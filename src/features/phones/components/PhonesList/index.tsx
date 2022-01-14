@@ -1,15 +1,16 @@
+import { Box } from '@mui/material';
 import React, {useCallback, useEffect} from 'react';
 import PhonesItem from "../PhonesItem";
 import {usePhones} from "../../../../hooks";
 
 const PhonesList = () => {
-    const {phones, onGetAll} = usePhones();
+    const {phones, onFetchPhones} = usePhones();
 
     useEffect(() => {
         if (!phones) {
-            onGetAll();
+            onFetchPhones();
         }
-    }, [onGetAll, phones]);
+    }, [onFetchPhones, phones]);
 
     const renderPhonesList = useCallback(() => {
         if (phones) {
@@ -38,9 +39,9 @@ const PhonesList = () => {
     }, [phones]);
 
     return (
-        <div>
+        <Box p={'1em'}>
             {phones && renderPhonesList()}
-        </div>
+        </Box>
     );
 };
 
