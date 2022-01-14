@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import React, {useCallback, useEffect} from 'react';
 import PhonesItem from "../PhonesItem";
 import {usePhones} from "../../../../hooks";
@@ -38,9 +39,9 @@ const PhonesList = () => {
     }, [phones]);
 
     return (
-        <div>
+        <Box p={'1em'}>
             {phones && renderPhonesList()}
-        </div>
+        </Box>
     );
 };
 

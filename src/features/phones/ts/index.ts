@@ -26,7 +26,7 @@ export interface PhonesInitialState {
 }
 
 export interface IPhoneNumberFormValues {
-    id: string | undefined;
+    id?: string | undefined;
     isActive: boolean;
     age: number | null;
     name: {
@@ -37,7 +37,7 @@ export interface IPhoneNumberFormValues {
     email: string | null;
     phone: string;
     address: string | null;
-    registered: string | undefined;
+    registered?: string | undefined;
 }
 
 export type PhonesFormComponentProps = {
