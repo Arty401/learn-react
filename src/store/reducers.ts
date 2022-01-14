@@ -1,10 +1,10 @@
 import {combineReducers} from "@reduxjs/toolkit";
-import auth from "../features/auth/redux/authSlice";
-import phones from "../features/phones/redux/phonesSlice";
+import authReducer from "../features/auth/redux/reducer";
+import phonesReducer from "../features/phones/redux/reducer";
 
 const reducers = combineReducers({
-    auth,
-    phones
+    auth: authReducer,
+    phones: phonesReducer
 });
 
 export default reducers;

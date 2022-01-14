@@ -1,12 +1,10 @@
 import React, {useCallback} from 'react';
 import {NavLink, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../../constants/routes";
-import {logOut} from "../../../features/auth/redux/authSlice";
-import {useAppDispatch, useAppSelector} from "../../../hooks";
+import {useAuth} from "../../../hooks";
 
 const Navbar = () => {
-    const {isLoggedIn} = useAppSelector(state => state.auth);
-    const dispatch = useAppDispatch();
+    const {onLogout, isLoggedIn} = useAuth()
     const navigate = useNavigate();
 
     const authButtons = useCallback(() => {
@@ -25,7 +23,7 @@ const Navbar = () => {
             );
         }
 
-        return <button type="button" className="btn btn-warning" onClick={() => dispatch(logOut())}>Sign-out</button>;
+        return <button type="button" className="btn btn-warning" onClick={() => onLogout()}>Sign-out</button>;
     }, [isLoggedIn])
 
     return (

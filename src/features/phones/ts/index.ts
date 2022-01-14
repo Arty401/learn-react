@@ -19,6 +19,7 @@ export interface PhoneNumberRecord {
 export interface PhonesInitialState {
     phones: PhoneNumberRecord[] | null,
     phone: PhoneNumberRecord | null,
+    lastCreatedId: PhoneNumberRecord["id"] | null,
     isLoading: boolean,
     errors: SerializedError | null | string,
 }
@@ -43,3 +44,8 @@ export type PhonesFormComponentProps = {
     submitHandler: SubmitHandler<IPhoneNumberFormValues>;
     submitButtonText?: string;
 };
+
+export type CreatePhoneResponse = {
+    phones: PhoneNumberRecord[];
+    id: PhoneNumberRecord["id"]
+}
